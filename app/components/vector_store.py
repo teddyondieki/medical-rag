@@ -22,10 +22,12 @@ def load_vector_store():
             )
         else:
             logger.warning("No vectore store found..")
+            raise CustomException("Vector store does not exist. Please run data_loader first.")
 
     except Exception as e:
         error_message = CustomException("Failed to load vectorstore" , e)
         logger.error(str(error_message))
+        raise error_message
 
 # Creating new vectorstore function
 def save_vector_store(text_chunks):
@@ -50,5 +52,6 @@ def save_vector_store(text_chunks):
     except Exception as e:
         error_message = CustomException("Failed to craete new vectorstore " , e)
         logger.error(str(error_message))
-    
+        raise error_message
+
 

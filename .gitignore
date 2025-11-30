@@ -2,3 +2,5 @@ RAG_Medcal_Chatbot.egg-info/
 .env
 __pycache__/
 .idea/
+vectorstore/
+logs/

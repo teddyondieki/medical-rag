@@ -16,6 +16,7 @@ def load_llm(huggingface_repo_id: str = HUGGINGFACE_REPO_ID , hf_token:str = HF_
             temperature=0.3,
             max_new_tokens=256,
             return_full_text=False,
+            task="text-generation",
         )
 
         logger.info("LLM loaded sucesfully...")
@@ -25,3 +26,4 @@ def load_llm(huggingface_repo_id: str = HUGGINGFACE_REPO_ID , hf_token:str = HF_
     except Exception as e:
         error_message = CustomException("Failed to load a llm" , e)
         logger.error(str(error_message))
+        raise error_message
