@@ -33,26 +33,24 @@ def create_qa_chain():
         if db is None:
             raise CustomException("Vector store not present or empty")
 
-        llm = load_llm(huggingface_repo_id=HUGGINGFACE_REPO_ID , hf_token=HF_TOKEN )
+        llm = load_llm()
 
         if llm is None:
             raise CustomException("LLM not loaded")
-        
+
         qa_chain = RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
-            retriever = db.as_retriever(search_kwargs={'k':1}),
+            retriever=db.as_retriever(search_kwargs={'k': 1}),
             return_source_documents=False,
             chain_type_kwargs={'prompt': set_custom_prompt()}
         )
 
-        logger.info("Sucesfully created the QA chain")
+        logger.info("Successfully created the QA chain")
         return qa_chain
-    
+
     except Exception as e:
         error_message = CustomException("Failed to make a QA chain", e)
         logger.error(str(error_message))
-        raise error_message
-
-
-
+        # 🚨 Explicitly return None on failure
+        return None

@@ -1,13 +1,16 @@
 from flask import Flask,render_template,request,session,redirect,url_for
-from app.components.retriever import create_qa_chain
 from dotenv import load_dotenv
 import os
 
+# Load environment variables before importing modules that rely on them
 load_dotenv()
-HF_TOKEN = os.environ.get("HF_TOKEN")
+
+from app.components.retriever import create_qa_chain
+from app.common.logger import get_logger
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+logger = get_logger(__name__)
 
 from markupsafe import Markup
 def nl2br(value):
@@ -30,6 +33,8 @@ def index():
 
             try:
                 qa_chain = create_qa_chain()
+                if qa_chain is None:
+                    raise RuntimeError("QA chain failed to initialize")
                 response = qa_chain.invoke({"query" : user_input})
                 result = response.get("result" , "No response")
 
@@ -37,7 +42,8 @@ def index():
                 session["messages"] = messages
 
             except Exception as e:
-                error_msg = f"Error : {str(e)}"
+                logger.exception("Failed to answer user query")
+                error_msg = f"{type(e).__name__}: {e}"
                 return render_template("index.html" , messages = session["messages"] , error = error_msg)
             
         return redirect(url_for("index"))
@@ -49,7 +55,4 @@ def clear():
     return redirect(url_for("index"))
 
 if __name__=="__main__":
-    app.run(host="0.0.0.0" , port=5000 , debug=True , use_reloader = False)
-
-
-
+    app.run(host="0.0.0.0" , port=5001, debug=True , use_reloader = False)
