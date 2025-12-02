@@ -1,6 +1,5 @@
 import os
 from app.components.pdf_loader import load_pdf_files,create_text_chunks
-from app.components.vector_store import save_vector_store
 from app.config.config import DB_FAISS_PATH
 
 from app.common.logger import get_logger
@@ -16,6 +15,7 @@ def process_and_store_pdfs():
 
         text_chunks = create_text_chunks(documents)
 
+        from app.components.vector_store import save_vector_store
         save_vector_store(text_chunks)
 
         logger.info("Vectorstore created sucesfully....")
@@ -23,6 +23,7 @@ def process_and_store_pdfs():
     except Exception as e:
         error_message = CustomException("Faialedd to create vectorstore",e)
         logger.error(str(error_message))
+        raise error_message
 
 
 if __name__=="__main__":

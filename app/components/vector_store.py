@@ -20,9 +20,20 @@ def load_vector_store():
                 embedding_model,
                 allow_dangerous_deserialization=True
             )
-        else:
-            logger.warning("No vectore store found..")
-            raise CustomException("Vector store does not exist. Please run data_loader first.")
+
+        logger.warning("Vector store directory missing. Attempting bootstrap via data loader...")
+        from app.components.data_loader import process_and_store_pdfs
+        process_and_store_pdfs()
+
+        if os.path.exists(DB_FAISS_PATH):
+            logger.info("Vector store bootstrap complete, reloading...")
+            return FAISS.load_local(
+                DB_FAISS_PATH,
+                embedding_model,
+                allow_dangerous_deserialization=True
+            )
+
+        raise CustomException("Vector store bootstrap failed; no FAISS index available.")
 
     except Exception as e:
         error_message = CustomException("Failed to load vectorstore" , e)
@@ -53,5 +64,3 @@ def save_vector_store(text_chunks):
         error_message = CustomException("Failed to craete new vectorstore " , e)
         logger.error(str(error_message))
         raise error_message
-
-
