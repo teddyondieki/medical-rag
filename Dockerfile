@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y \
 COPY . .
 
 ## Install Python dependencies
-## RUN #pip install --no-cache-dir torch==2.3.1+cpu \
-#    -f https://download.pytorch.org/whl/torch_stable.html
+RUN pip install --no-cache-dir torch==2.3.1+cpu \
+    -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip install --no-cache-dir -e .
 
 ## Pre-build vector store so containers start warm
