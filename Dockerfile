@@ -18,14 +18,16 @@ RUN apt-get update && apt-get install -y \
 COPY . .
 
 ## Install Python dependencies
-RUN pip install --no-cache-dir torch==2.3.1+cpu \
-    -f https://download.pytorch.org/whl/torch_stable.html
+## RUN #pip install --no-cache-dir torch==2.3.1+cpu \
+#    -f https://download.pytorch.org/whl/torch_stable.html
 RUN pip install --no-cache-dir -e .
+
+## Pre-build vector store so containers start warm
+RUN python -m app.components.data_loader || (\
+    echo "Vector store bootstrap failed; ensure PDFs and env vars are available during build" && exit 1)
 
 ## Expose only flask port
 EXPOSE 5000
 
 ## Run the Flask app
 CMD ["python", "app/application.py"]
-
-
