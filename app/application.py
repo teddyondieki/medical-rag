@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,session,redirect,url_for
+from flask import Flask, jsonify, render_template, request, session, redirect, url_for
 from dotenv import load_dotenv
 import os
 
@@ -48,6 +48,12 @@ def index():
             
         return redirect(url_for("index"))
     return render_template("index.html" , messages=session.get("messages" , []))
+
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "ok"
+    })
 
 @app.route("/clear")
 def clear():
